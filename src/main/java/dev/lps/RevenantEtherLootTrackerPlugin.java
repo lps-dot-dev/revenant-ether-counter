@@ -19,9 +19,9 @@ import net.runelite.client.plugins.loottracker.LootReceived;
 
 @Slf4j
 @PluginDescriptor(
-    name = "Revenant Ether Counter"
+    name = "Revenant Ether Loot Tracker"
 )
-public class RevenantEtherTrackerPlugin extends Plugin
+public class RevenantEtherLootTrackerPlugin extends Plugin
 {
 
     @Inject
@@ -31,7 +31,7 @@ public class RevenantEtherTrackerPlugin extends Plugin
     private ConfigManager configManager;
 
     @Inject
-    private RevenantEtherTrackerConfig config;
+    private RevenantEtherLootTrackerConfig config;
 
     @Getter
     private long totalRevenantEther = 0L;
@@ -85,18 +85,21 @@ public class RevenantEtherTrackerPlugin extends Plugin
     }
 
     @Provides
-    RevenantEtherTrackerConfig provideConfig(ConfigManager configManager)
+    RevenantEtherLootTrackerConfig provideConfig(ConfigManager configManager)
     {
-        return configManager.getConfig(RevenantEtherTrackerConfig.class);
+        return configManager.getConfig(RevenantEtherLootTrackerConfig.class);
     }
 
     /**
-     * Attempts to sync our custom revenant ether tracker with the number of revenant ether counted in the collection
+     * Attempts to sync our custom revenant ether tracker with the number of
+     * revenant ether counted in the collection
      * log.
      *
-     * @implNote This function is reliant on the collection log interface being present, one way of ensuring this is to
+     * @implNote This function is reliant on the collection log interface being
+     *           present, one way of ensuring this is to
      *           listen for the `ScriptID.COLLECTION_DRAW_LIST` script to finish.
-     * @throws IllegalStateException When this method is invoked when the collection log interface is either not
+     * @throws IllegalStateException When this method is invoked when the collection
+     *                               log interface is either not
      *                               present or ready.
      */
     private void syncWithCollectionLog() throws IllegalStateException
@@ -113,7 +116,8 @@ public class RevenantEtherTrackerPlugin extends Plugin
         Widget collectionLogWindow = client.getWidget(InterfaceID.COLLECTION);
         if (collectionLogWindow == null)
         {
-            throw new IllegalStateException("This method must only be called after the collection log interface is ready!");
+            throw new IllegalStateException(
+                "This method must only be called after the collection log interface is ready!");
         }
 
         for (Widget item : collectionLogWindow.getDynamicChildren())
@@ -135,6 +139,6 @@ public class RevenantEtherTrackerPlugin extends Plugin
 
     private void updateConfig()
     {
-        configManager.setConfiguration("revenantEtherTracker", "totalRevenantEther", totalRevenantEther);
+        configManager.setConfiguration("revenantEtherLootTracker", "totalRevenantEther", totalRevenantEther);
     }
 }
