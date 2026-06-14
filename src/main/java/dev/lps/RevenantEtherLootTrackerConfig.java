@@ -8,12 +8,12 @@ import net.runelite.client.config.ConfigItem;
 public interface RevenantEtherLootTrackerConfig extends Config
 {
     @ConfigItem(
-        keyName = "totalRevenantEther",
-        name = "Total Revenant Ether",
+        keyName = "totalRevenantEtherLooted",
+        name = "Total Revenant Ether Looted",
         description = "The total amount of revenant ether received as drops",
         hidden = true // Hides it from the plugin settings panel so users don't accidentally edit it
     )
-    default long totalRevenantEther()
+    default long totalRevenantEtherLooted()
     {
         return 0L; // Default value if no data exists yet
     }

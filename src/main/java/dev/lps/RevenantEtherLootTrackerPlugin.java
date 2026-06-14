@@ -2,7 +2,6 @@ package dev.lps;
 
 import com.google.inject.Provides;
 import javax.inject.Inject;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.Client;
 import net.runelite.api.ScriptID;
@@ -33,8 +32,7 @@ public class RevenantEtherLootTrackerPlugin extends Plugin
     @Inject
     private RevenantEtherLootTrackerConfig config;
 
-    @Getter
-    private long totalRevenantEther = 0L;
+    private long totalRevenantEtherLooted = 0L;
 
     @Subscribe
     public void onLootReceived(LootReceived event)
@@ -51,7 +49,7 @@ public class RevenantEtherLootTrackerPlugin extends Plugin
 
         if (revenantEtherLooted > 0L)
         {
-            totalRevenantEther += revenantEtherLooted;
+            totalRevenantEtherLooted += revenantEtherLooted;
             updateConfig();
         }
     }
@@ -75,7 +73,7 @@ public class RevenantEtherLootTrackerPlugin extends Plugin
     @Override
     protected void startUp() throws Exception
     {
-        totalRevenantEther = config.totalRevenantEther();
+        totalRevenantEtherLooted = config.totalRevenantEtherLooted();
     }
 
     @Override
@@ -108,7 +106,7 @@ public class RevenantEtherLootTrackerPlugin extends Plugin
          * Safety check: If our custom tracker is already past the 16-bit limit,
          * we never need to trust or look at the collection log window ever again.
          */
-        if (totalRevenantEther >= 65535)
+        if (totalRevenantEtherLooted >= 65535)
         {
             return;
         }
@@ -128,9 +126,9 @@ public class RevenantEtherLootTrackerPlugin extends Plugin
             }
 
             int collectionLogQuantity = item.getItemQuantity();
-            if (collectionLogQuantity > totalRevenantEther)
+            if (collectionLogQuantity > totalRevenantEtherLooted)
             {
-                totalRevenantEther = collectionLogQuantity;
+                totalRevenantEtherLooted = collectionLogQuantity;
                 updateConfig();
             }
             break;
@@ -139,6 +137,6 @@ public class RevenantEtherLootTrackerPlugin extends Plugin
 
     private void updateConfig()
     {
-        configManager.setConfiguration("revenantEtherLootTracker", "totalRevenantEther", totalRevenantEther);
+        configManager.setConfiguration("revenantEtherLootTracker", "totalRevenantEtherLooted", totalRevenantEtherLooted);
     }
 }
