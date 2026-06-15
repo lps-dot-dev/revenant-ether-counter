@@ -113,14 +113,14 @@ public class RevenantEtherLootTrackerPlugin extends Plugin
             return;
         }
 
-        Widget collectionLogWindow = client.getWidget(InterfaceID.COLLECTION);
-        if (collectionLogWindow == null)
+        Widget collectionLogItems = client.getWidget(InterfaceID.Collection.ITEMS_CONTENTS);
+        if (collectionLogItems == null)
         {
             throw new IllegalStateException(
                 "This method must only be called after the collection log interface is ready!");
         }
 
-        for (Widget item : collectionLogWindow.getDynamicChildren())
+        for (Widget item : collectionLogItems.getChildren())
         {
             if (item.getItemId() != ItemID.WILD_CAVE_SHARD)
             {
