@@ -18,7 +18,9 @@ import net.runelite.client.plugins.loottracker.LootReceived;
 
 @Slf4j
 @PluginDescriptor(
-    name = "Revenant Ether Loot Tracker"
+    name = "Revenant Ether Loot Tracker",
+    description = "Tracks revenant ether, even after the collection log stops!",
+    tags = {"revenants", "revs", "ether", "tracker"}
 )
 public class RevenantEtherLootTrackerPlugin extends Plugin
 {
@@ -91,8 +93,7 @@ public class RevenantEtherLootTrackerPlugin extends Plugin
 
     /**
      * Attempts to sync our custom revenant ether tracker with the number of
-     * revenant ether counted in the collection
-     * log.
+     * revenant ether counted in the collection log.
      *
      * @implNote This function is reliant on the collection log interface being
      *           present, one way of ensuring this is to
