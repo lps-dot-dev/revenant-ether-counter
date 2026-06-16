@@ -24,7 +24,6 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.plugins.loottracker.LootReceived;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.QuantityFormatter;
-import net.runelite.client.util.Text;
 
 @Slf4j
 @PluginDescriptor(
@@ -57,6 +56,49 @@ public class RevenantEtherLootTrackerPlugin extends Plugin
 
     @Getter
     private long totalRevenantEtherLooted = 0L;
+
+    @Provides
+    RevenantEtherLootTrackerConfig provideConfig(ConfigManager configManager)
+    {
+        return configManager.getConfig(RevenantEtherLootTrackerConfig.class);
+    }
+
+    @Override
+    protected void startUp() throws Exception
+    {
+        totalRevenantEtherLooted = config.totalRevenantEtherLooted();
+        overlayManager.add(revenantEtherLogOverlay);
+    }
+
+    @Override
+    protected void shutDown() throws Exception
+    {
+        overlayManager.remove(revenantEtherLogOverlay);
+    }
+
+    @Subscribe
+    public void onChatMessage(ChatMessage chatMessage)
+    {
+        if (
+            config.displayRevenantEtherCollectionLogOverlay() == false
+            || totalRevenantEtherLooted <= UNSIGNED_SHORT_MAX_VALUE
+            || chatMessage.getType() != ChatMessageType.GAMEMESSAGE
+        )
+        {
+            return;
+        }
+
+        MessageNode messageNode = chatMessage.getMessageNode();
+        String message = messageNode.getValue();
+        if (
+            message.startsWith(TARGET_MESSAGE_PREFIX)
+            && message.endsWith(TARGET_MESSAGE_SUFFIX)
+        )
+        {
+            String newMessage = TARGET_MESSAGE_PREFIX + QuantityFormatter.formatNumber(totalRevenantEtherLooted) + TARGET_MESSAGE_SUFFIX;
+            messageNode.setValue(newMessage);
+        }
+    }
 
     @Subscribe
     public void onLootReceived(LootReceived event)
@@ -95,45 +137,9 @@ public class RevenantEtherLootTrackerPlugin extends Plugin
         }
     }
 
-    @Subscribe
-    public void onChatMessage(ChatMessage chatMessage)
-    {
-        if (chatMessage.getType() != ChatMessageType.GAMEMESSAGE || totalRevenantEtherLooted <= UNSIGNED_SHORT_MAX_VALUE)
-        {
-            return;
-        }
-
-        MessageNode messageNode = chatMessage.getMessageNode();
-        String message = messageNode.getValue();
-        if (message.startsWith(TARGET_MESSAGE_PREFIX) && message.endsWith(TARGET_MESSAGE_SUFFIX))
-        {
-            String newMessage = TARGET_MESSAGE_PREFIX + QuantityFormatter.formatNumber(totalRevenantEtherLooted) + TARGET_MESSAGE_SUFFIX;
-            messageNode.setValue(newMessage);
-        }
-    }
-
-    @Override
-    protected void startUp() throws Exception
-    {
-        totalRevenantEtherLooted = config.totalRevenantEtherLooted();
-        overlayManager.add(revenantEtherLogOverlay);
-    }
-
-    @Override
-    protected void shutDown() throws Exception
-    {
-        overlayManager.remove(revenantEtherLogOverlay);
-    }
-
-    @Provides
-    RevenantEtherLootTrackerConfig provideConfig(ConfigManager configManager)
-    {
-        return configManager.getConfig(RevenantEtherLootTrackerConfig.class);
-    }
-
     /**
      * Attempts to sync our custom revenant ether tracker with the number of
-     * revenant ether counted in the collection log.
+     * revenant ether shown in the collection log.
      *
      * @implNote This function is reliant on the collection log interface being
      *           present, one way of ensuring this is to
@@ -157,7 +163,8 @@ public class RevenantEtherLootTrackerPlugin extends Plugin
         if (collectionLogItems == null)
         {
             throw new IllegalStateException(
-                "This method must only be called after the collection log interface is ready!");
+                "This method must only be called after the collection log interface is ready!"
+            );
         }
 
         for (Widget item : collectionLogItems.getChildren())

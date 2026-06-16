@@ -17,12 +17,12 @@ import net.runelite.client.util.QuantityFormatter;
 
 public class RevenantEtherLogOverlay extends WidgetItemOverlay
 {
-    private final RevenantEtherLootTrackerPlugin plugin;
-
     @Inject
-    public RevenantEtherLogOverlay(RevenantEtherLootTrackerPlugin plugin)
+    private RevenantEtherLootTrackerPlugin plugin;
+
+    public RevenantEtherLogOverlay()
     {
-        this.plugin = plugin;
+        super();
 
         // This ensures your custom drawings are layered cleanly on top of interface graphics
         drawAfterInterface(InterfaceID.COLLECTION);
@@ -35,7 +35,10 @@ public class RevenantEtherLogOverlay extends WidgetItemOverlay
          * If the custom tracker hasn't surpassed the maximum 16-bit capacity yet,
          * let the game's native UI display the itemQuantitys naturally and exit early.
          */
-        if (plugin.getConfig().hideRevenantEtherCollectionLogOverlay() || plugin.getTotalRevenantEtherLooted() <= RevenantEtherLootTrackerPlugin.UNSIGNED_SHORT_MAX_VALUE)
+        if (
+            plugin.getConfig().displayRevenantEtherCollectionLogOverlay() == false
+            || plugin.getTotalRevenantEtherLooted() <= RevenantEtherLootTrackerPlugin.UNSIGNED_SHORT_MAX_VALUE
+        )
         {
             return;
         }
