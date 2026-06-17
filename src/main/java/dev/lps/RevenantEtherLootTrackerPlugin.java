@@ -236,6 +236,7 @@ public class RevenantEtherLootTrackerPlugin extends Plugin
             int collectionLogQuantity = item.getItemQuantity();
             if (collectionLogQuantity > totalRevenantEtherLooted)
             {
+                chatMessageManager.queue(QueuedMessage.builder().type(ChatMessageType.GAMEMESSAGE).runeLiteFormattedMessage(ColorUtil.wrapWithColorTag("Revenant Ether Loot Tracker Plugin: The tracker has been successfully synced with your collection log!", ColorScheme.PROGRESS_COMPLETE_COLOR)).build());
                 totalRevenantEtherLooted = collectionLogQuantity;
                 updateConfig();
             }
